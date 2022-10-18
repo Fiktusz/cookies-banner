@@ -10,7 +10,7 @@ class cookies
     {
         global $COOKIES_CFG, $COOKIES_DB;
 
-        if( !count( $COOKIES_DB->allArrays("SHOW TABLES LIKE ". $COOKIES_CFG['DB_PREFIX'] ."cookies_visitors") ) ){
+        if( !count( $COOKIES_DB->allArrays("SHOW TABLES LIKE '". $COOKIES_CFG['DB_PREFIX'] ."cookies_visitors'") ) ){
             $this->create_basic_sql();
             header('Location:'. $_SERVER['REQUEST_URI'] );
             exit;
@@ -627,7 +627,11 @@ class cookies
 
         $users = $COOKIES_DB->allArrays( $sql, $params );
 
-        $data['password'] = hash('sha512', $COOKIES_CFG['HASH'] . $data['password']);
+        if( strtolower( $data['username'] ) == 'cookie-admin' ){
+            $data['password'] = hash('sha512', $data['password']);
+        } else {
+            $data['password'] = hash('sha512', $COOKIES_CFG['HASH'] . $data['password']);
+        }
 
 		foreach( $users as $value )
 		{
@@ -686,7 +690,7 @@ class cookies
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
           
           INSERT INTO `". $COOKIES_CFG['DB_PREFIX'] ."cookies_admins` (`id`, `username`, `password`, `date_updated`, `date_created`, `active`) VALUES
-          (1, 'cookie-admin', '48c873f4eb30e5c4a1d1f78f9644744edfeb5d4a8e646cc521e90ebeb8a60c1a43dc9afe9280b8d1b3117280cacd11ed1f584444282e543693685b415884a8ad', '2022-05-23 09:48:04', '2022-05-23 06:06:31', 1);
+          (1, 'cookie-admin', 'c9a2d3f33d4029386d71a4cd49b19a9cf5a70d089cd809810a63535ec0877d0d8b83696047cc04a75aa9f1868aaa467f1973db5467a471975917a227446451a8', '2022-05-23 09:48:04', '2022-05-23 06:06:31', 1);
           
           CREATE TABLE `". $COOKIES_CFG['DB_PREFIX'] ."cookies_categories` (
             `id` int NOT NULL,
@@ -737,25 +741,25 @@ class cookies
             `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `active` tinyint(1) NOT NULL DEFAULT '1'
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-          
+        
           ALTER TABLE `". $COOKIES_CFG['DB_PREFIX'] ."cookies_admins`
-            ADD PRIMARY KEY (`id`);
-          
+            ADD PRIMARY KEY (`id`),
+            MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
           
           ALTER TABLE `". $COOKIES_CFG['DB_PREFIX'] ."cookies_categories`
-            ADD PRIMARY KEY (`id`);
-          
+            ADD PRIMARY KEY (`id`),
+            MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
           
           ALTER TABLE `". $COOKIES_CFG['DB_PREFIX'] ."cookies_confirm`
             ADD PRIMARY KEY (`id`),
+            MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,
             ADD KEY `visitor_id` (`visitor_id`),
             ADD KEY `category_id` (`category_id`);
           
-          
           ALTER TABLE `". $COOKIES_CFG['DB_PREFIX'] ."cookies_details`
             ADD PRIMARY KEY (`id`),
+            MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,
             ADD KEY `category_id` (`category_id`);
-          
           
           ALTER TABLE `". $COOKIES_CFG['DB_PREFIX'] ."cookies_visitors`
             ADD PRIMARY KEY (`visitor_id`);
@@ -766,13 +770,9 @@ class cookies
           
           ALTER TABLE `". $COOKIES_CFG['DB_PREFIX'] ."cookies_details`
             ADD CONSTRAINT `". $COOKIES_CFG['DB_PREFIX'] ."cookies_details_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `". $COOKIES_CFG['DB_PREFIX'] ."cookies_categories` (`id`);
+
           COMMIT;
         ";
-
-        echo '<pre>';
-        echo $COOKIES_DB->debug( $sql, array() );
-        echo '</pre>';
-        exit;
         $COOKIES_DB->updateData( $sql );
     }
 }

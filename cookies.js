@@ -29,8 +29,6 @@
         var confirmed;
 
         this.initialize = function(){
-
-            //showSettings();
             return this;
         };
 
@@ -74,22 +72,7 @@
 
             if( !update ) return;
             
-            var ad_storage = ( confirmed.indexOf('marketing') > 0 ) ? 'granted' : 'denied';
-            var analytics_storage = ( confirmed.indexOf('statistics') > 0 ) ? 'granted' : 'denied';
-
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('consent', 'update', {
-                'ad_storage': ad_storage,
-                'analytics_storage': analytics_storage,
-                'functionality_storage': 'denied',
-                'personalization_storage': 'denied',
-                'security_storage': 'denied'
-            });
-            dataLayer.push({'event': 'cookies_update'});
-
-            //cookies_update
-            //cookiesPanel.remove();
+            /* POST CONFIRM ACTIONS */
         };
 
         var initializeButtons = function(){
@@ -233,13 +216,14 @@
             
             var confirm = action( data );
             try{
-                response = JSON.parse( confirm.responseText );
-
+                var response = JSON.parse( confirm.responseText );
                 return response.confirm;
             } catch(e){
                 console.log( e );
                 console.log( response );
             }
+
+            return false;
         };
 
         checkConfirmed = function( confirmed ){

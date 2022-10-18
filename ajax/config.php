@@ -13,8 +13,8 @@ $COOKIES_CFG['DB_HOST'] = 'localhost';
 $COOKIES_CFG['DB_PORT'] = '3306';
 $COOKIES_CFG['DB_USER'] = 'root';
 $COOKIES_CFG['DB_PASS'] = '';
-$COOKIES_CFG['DB_NAME'] = '';
-$COOKIES_CFG['DB_PREFIX'] = '';
+$COOKIES_CFG['DB_NAME'] = 'cookies_v2';
+$COOKIES_CFG['DB_PREFIX'] = 'cks_';
 
 $COOKIES_CFG['cookie_variable'] = 'visitor_id';
 
